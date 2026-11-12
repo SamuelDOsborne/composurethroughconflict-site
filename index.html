@@ -1397,6 +1397,13 @@
             .cine-hero .hero-title { font-size: clamp(42px, 14vw, 60px); }
             .cine-hero .hero-title em { padding-left: .35em; }
         }
+        /* PRESENTED AT: conference logo band (bg matches the SCFIA logo file's navy) */
+        .presented-at { background: #141820; box-shadow: 0 0 0 100vmax #141820; clip-path: inset(0 -100vmax); padding: 64px 24px; text-align: center; }
+        .presented-at-label { font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+        .presented-at-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 48px; }
+        .presented-at-logo { display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: rgba(245,245,247,.7); font-size: 13px; line-height: 1.4; max-width: 280px; }
+        .presented-at-logo img { width: 200px; height: auto; transition: transform .2s ease; }
+        .presented-at-logo:hover img { transform: scale(1.04); }
     </style>
     <script>
         // Turn on motion before first paint (skipped for visitors who ask for reduced motion)
@@ -1659,6 +1666,17 @@
                 <div class="result-number">95%</div>
                 <div class="result-label">Presentation Skills</div>
             </div>
+        </div>
+    </section>
+
+    <!-- PRESENTED AT -->
+    <section class="presented-at" aria-label="Recently presented at">
+        <div class="presented-at-label">Recently Presented At</div>
+        <div class="presented-at-logos">
+            <a class="presented-at-logo" href="https://scfia.org/" target="_blank" rel="noopener">
+                <img src="images/SCFIA%20logo%20%E2%80%94%20white%2C%20transparent%402x.png" alt="Southern California Fraud Investigators' Association (SCFIA) seal" width="1280" height="1360" loading="lazy">
+                <span>Southern California Fraud Investigators&rsquo; Association &middot; 2026 Conference</span>
+            </a>
         </div>
     </section>
 
