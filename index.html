@@ -1401,9 +1401,17 @@
         .spoken-at { padding: 56px 24px 64px; text-align: center; border-bottom: 1px solid rgba(255,255,255,.06); }
         .spoken-at-label { font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: 32px; }
         .spoken-at-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 32px 80px; }
-        .spoken-at-logo { display: flex; flex-direction: column; align-items: center; gap: 16px; text-decoration: none; color: rgba(245,245,247,.6); font-size: 13px; line-height: 1.4; max-width: 240px; }
+        .spoken-at-logo { display: flex; flex-direction: column; align-items: center; gap: 16px; text-decoration: none; color: rgba(245,245,247,.6); font-size: 13px; line-height: 1.4; max-width: 280px; }
         .spoken-at-logo img { height: 120px; width: auto; opacity: .85; transition: opacity .2s ease, transform .2s ease; }
         .spoken-at-logo:hover img { opacity: 1; transform: scale(1.03); }
+        .as-seen-on .spoken-at-logos { align-items: flex-start; }
+        .as-seen-on .spoken-at-logo { gap: 8px; max-width: 320px; }
+        .as-seen-on-name { font-size: 22px; font-weight: 600; color: #f5f5f7; letter-spacing: .01em; transition: color .2s ease; }
+        .as-seen-on-name { text-decoration: none; }
+        .as-seen-on-name:hover { color: var(--gold); }
+        .as-seen-on-links { margin-top: 6px; font-size: 13px; }
+        .as-seen-on-links a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(212,165,116,.35); }
+        .as-seen-on-links a:hover { border-bottom-color: var(--gold); }
         @media (max-width: 600px) { .spoken-at-logos { gap: 40px; } .spoken-at-logo img { height: 100px; } }
     </style>
     <script>
@@ -1487,12 +1495,24 @@
         <div class="spoken-at-logos">
             <a class="spoken-at-logo" href="https://www.caionline.org/" target="_blank" rel="noopener">
                 <img src="images/ccal-cai-white.png" alt="College of Community Association Lawyers and Community Associations Institute logo" width="198" height="191" loading="lazy">
-                <span>CAI National Law Seminar 2026</span>
+                <span>Community Associations Institute National Law Seminar 2026</span>
             </a>
             <a class="spoken-at-logo" href="https://scfia.org/" target="_blank" rel="noopener">
                 <img src="images/scfia-white.png" alt="Southern California Fraud Investigators' Association (SCFIA) seal" width="445" height="480" loading="lazy">
-                <span>SCFIA Conference 2026</span>
+                <span>Southern California Fraud Investigators&rsquo; Association Conference 2026</span>
             </a>
+        </div>
+    </section>
+
+    <!-- AS SEEN ON -->
+    <section class="spoken-at as-seen-on" aria-label="As seen on">
+        <div class="spoken-at-label">As Seen On</div>
+        <div class="spoken-at-logos">
+            <div class="spoken-at-logo">
+                <a class="as-seen-on-name" href="https://www.youtube.com/watch?v=g-2tIr_5Zwo" target="_blank" rel="noopener">Badass Leaders Podcast</a>
+                <span>&ldquo;How to Crush Imposter Syndrome &amp; Lead With Confidence&rdquo;</span>
+                <span class="as-seen-on-links"><a href="https://www.youtube.com/watch?v=g-2tIr_5Zwo" target="_blank" rel="noopener">Watch on YouTube</a> &middot; <a href="https://sites.libsyn.com/536967/how-to-crush-imposter-syndrome-lead-with-confidence-samuel-osborne-and-david-graf" target="_blank" rel="noopener">Listen to the episode</a></span>
+            </div>
         </div>
     </section>
 
