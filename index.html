@@ -1397,13 +1397,14 @@
             .cine-hero .hero-title { font-size: clamp(42px, 14vw, 60px); }
             .cine-hero .hero-title em { padding-left: .35em; }
         }
-        /* PRESENTED AT: conference logo band (bg matches the SCFIA logo file's navy) */
-        .presented-at { background: #141820; box-shadow: 0 0 0 100vmax #141820; clip-path: inset(0 -100vmax); padding: 64px 24px; text-align: center; }
-        .presented-at-label { font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-        .presented-at-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 48px; }
-        .presented-at-logo { display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: rgba(245,245,247,.7); font-size: 13px; line-height: 1.4; max-width: 280px; }
-        .presented-at-logo img { width: 200px; height: auto; transition: transform .2s ease; }
-        .presented-at-logo:hover img { transform: scale(1.04); }
+        /* SPOKEN AT: conference logo strip under the hero */
+        .spoken-at { padding: 56px 24px 64px; text-align: center; border-bottom: 1px solid rgba(255,255,255,.06); }
+        .spoken-at-label { font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: 32px; }
+        .spoken-at-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 32px 80px; }
+        .spoken-at-logo { display: flex; flex-direction: column; align-items: center; gap: 16px; text-decoration: none; color: rgba(245,245,247,.6); font-size: 13px; line-height: 1.4; max-width: 240px; }
+        .spoken-at-logo img { height: 120px; width: auto; opacity: .85; transition: opacity .2s ease, transform .2s ease; }
+        .spoken-at-logo:hover img { opacity: 1; transform: scale(1.03); }
+        @media (max-width: 600px) { .spoken-at-logos { gap: 40px; } .spoken-at-logo img { height: 100px; } }
     </style>
     <script>
         // Turn on motion before first paint (skipped for visitors who ask for reduced motion)
@@ -1478,6 +1479,21 @@
             </div>
         </div>
         <span class="scroll-cue" aria-hidden="true"></span>
+    </section>
+
+    <!-- SPOKEN AT -->
+    <section class="spoken-at" aria-label="Spoken at">
+        <div class="spoken-at-label">Spoken At</div>
+        <div class="spoken-at-logos">
+            <a class="spoken-at-logo" href="https://www.caionline.org/" target="_blank" rel="noopener">
+                <img src="images/ccal-cai-white.png" alt="College of Community Association Lawyers and Community Associations Institute logo" width="198" height="191" loading="lazy">
+                <span>CAI National Law Seminar 2026</span>
+            </a>
+            <a class="spoken-at-logo" href="https://scfia.org/" target="_blank" rel="noopener">
+                <img src="images/scfia-white.png" alt="Southern California Fraud Investigators' Association (SCFIA) seal" width="445" height="480" loading="lazy">
+                <span>SCFIA Conference 2026</span>
+            </a>
+        </div>
     </section>
 
     <!-- SHOW REEL: switch on by filling CTC (the config block in the script near the end of this file) -->
@@ -1666,17 +1682,6 @@
                 <div class="result-number">95%</div>
                 <div class="result-label">Presentation Skills</div>
             </div>
-        </div>
-    </section>
-
-    <!-- PRESENTED AT -->
-    <section class="presented-at" aria-label="Recently presented at">
-        <div class="presented-at-label">Recently Presented At</div>
-        <div class="presented-at-logos">
-            <a class="presented-at-logo" href="https://scfia.org/" target="_blank" rel="noopener">
-                <img src="images/SCFIA%20logo%20%E2%80%94%20white%2C%20transparent%402x.png" alt="Southern California Fraud Investigators' Association (SCFIA) seal" width="1280" height="1360" loading="lazy">
-                <span>Southern California Fraud Investigators&rsquo; Association &middot; 2026 Conference</span>
-            </a>
         </div>
     </section>
 
