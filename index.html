@@ -1410,6 +1410,13 @@
         .as-seen-on-name { text-decoration: none; }
         .as-seen-on-name:hover { color: var(--gold); }
         .as-seen-on-links { margin-top: 6px; font-size: 13px; }
+        .as-seen-on .spoken-at-logo { max-width: 480px; }
+        .as-seen-on-thumb { position: relative; display: block; width: 100%; max-width: 480px; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 1px solid rgba(255,255,255,.08); box-shadow: 0 12px 32px rgba(0,0,0,.45); background: #111; }
+        .as-seen-on .as-seen-on-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 1; object-fit: cover; display: block; transition: transform .3s ease; }
+        .as-seen-on .as-seen-on-thumb:hover img { transform: scale(1.03); }
+        .as-seen-on-play { position: absolute; left: 50%; top: 50%; width: 68px; height: 68px; margin: -34px 0 0 -34px; border-radius: 50%; background: rgba(0,0,0,.6); border: 2px solid var(--gold); transition: background .2s ease; }
+        .as-seen-on-play::after { content: ""; position: absolute; left: 27px; top: 21px; border-style: solid; border-width: 13px 0 13px 20px; border-color: transparent transparent transparent var(--gold); }
+        .as-seen-on-thumb:hover .as-seen-on-play { background: rgba(0,0,0,.8); }
         .as-seen-on-links a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(212,165,116,.35); }
         .as-seen-on-links a:hover { border-bottom-color: var(--gold); }
         @media (max-width: 600px) { .spoken-at-logos { gap: 40px; } .spoken-at-logo img { height: 100px; } }
@@ -1424,7 +1431,6 @@
     </script>
 </head>
 <body>
-    <div class="cursor" aria-hidden="true"><div class="cursor-dot"></div><div class="cursor-ring"></div></div>
 
     <!-- NAV -->
     <nav id="nav">
@@ -1509,6 +1515,10 @@
         <div class="spoken-at-label">As Seen On</div>
         <div class="spoken-at-logos">
             <div class="spoken-at-logo">
+                <a class="as-seen-on-thumb" href="https://www.youtube.com/watch?v=g-2tIr_5Zwo" target="_blank" rel="noopener" aria-label="Watch the Badass Leaders Podcast episode on YouTube">
+                    <img src="https://i.ytimg.com/vi/g-2tIr_5Zwo/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/g-2tIr_5Zwo/hqdefault.jpg'" alt="Sam Osborne and David Graf on the Badass Leaders Podcast" width="1280" height="720" loading="lazy">
+                    <span class="as-seen-on-play" aria-hidden="true"></span>
+                </a>
                 <a class="as-seen-on-name" href="https://www.youtube.com/watch?v=g-2tIr_5Zwo" target="_blank" rel="noopener">Badass Leaders Podcast</a>
                 <span>&ldquo;How to Crush Imposter Syndrome &amp; Lead With Confidence&rdquo;</span>
                 <span class="as-seen-on-links"><a href="https://www.youtube.com/watch?v=g-2tIr_5Zwo" target="_blank" rel="noopener">Watch on YouTube</a> &middot; <a href="https://sites.libsyn.com/536967/how-to-crush-imposter-syndrome-lead-with-confidence-samuel-osborne-and-david-graf" target="_blank" rel="noopener">Listen to the episode</a></span>
@@ -1626,7 +1636,7 @@
             </div>
             <div class="speaker-card">
                 <div class="speaker-portrait plain" style="--src:url('images/opt/ctc-sam-portrait.jpg?v=5'); --fx:42%; --fy:30%"><img src="images/opt/ctc-sam-portrait.jpg?v=5" alt="Sam Osborne speaking on stage" loading="lazy" width="960" height="1200"></div>
-                <div class="speaker-role">Demartini Method Facilitator · Los Angeles</div>
+                <div class="speaker-role">President-Elect, National Speakers Association of Southern&nbsp;California<br>Demartini Method Facilitator · Los Angeles</div>
                 <h3 class="speaker-name">Sam Osborne</h3>
                 <p class="speaker-bio">A metal shard nearly took his sight — and transformed his relationship with perception. He has studied perception since 2008 and the Demartini Method since 2014, and now works with attorneys and leaders who need composure under pressure. He delivers live demonstrations of perceptual transformation. Audiences witness it working in real time.</p>
             </div>
@@ -2240,28 +2250,6 @@
             list.style.display = open ? 'none' : 'block';
             icon.style.transform = open ? 'rotate(0deg)' : 'rotate(180deg)';
         }
-
-        // Custom cursor - fine-pointer devices only, and only once JS is running.
-        (function () {
-            var fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-            if (!fine) return;
-            document.body.classList.add('has-custom-cursor');
-            var dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring');
-            if (!dot || !ring) return;
-            var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            var mx = 0, my = 0, rx = 0, ry = 0;
-            window.addEventListener('mousemove', function (e) { mx = e.clientX; my = e.clientY; }, { passive: true });
-            (function loop() {
-                dot.style.left = mx + 'px'; dot.style.top = my + 'px';
-                if (reduce) { rx = mx; ry = my; } else { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; }
-                ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-                requestAnimationFrame(loop);
-            })();
-            document.querySelectorAll('a,button,.outcome-card,.testimonial-slide,.fee-card,.result-card,.what-block').forEach(function (el) {
-                el.addEventListener('mouseenter', function () { ring.style.width = '50px'; ring.style.height = '50px'; ring.style.borderColor = 'rgba(212,165,116,.55)'; });
-                el.addEventListener('mouseleave', function () { ring.style.width = '34px'; ring.style.height = '34px'; ring.style.borderColor = 'rgba(245,245,247,.32)'; });
-            });
-        })();
     </script>
 </body>
 </html>
