@@ -2052,9 +2052,11 @@
            - loopStart / loopEnd: the seconds of that clip to loop (6 to 10 seconds is ideal).
            - chapters: jump points inside the reel, in seconds. Edit the labels to match the cut; delete any you don't have.
            - uploadDate: the date the reel went live (YYYY-MM-DD), for search engines.
-           Leave reel empty and the page shows the "Show reel coming soon" state with the photos. */
+           - youtube:  OR a YouTube video ID instead of a Stream ID (the part after youtu.be/). If set, it is used for the reel.
+           Leave reel and youtube empty and the page shows the "Show reel coming soon" state with the photos. */
         const CTC = {
             reel: '',
+            youtube: 'FdoJZHSGE0g',
             length: '',
             loop: '',
             loopStart: 0,
@@ -2064,7 +2066,7 @@
                 { label: 'Dave on the cost of conflict', start: null },
                 { label: 'The room afterward', start: null }
             ],
-            uploadDate: ''
+            uploadDate: '2026-11-15'
         };
         const STREAM = 'https://customer-lilcuopn7rwe61gd.cloudflarestream.com/';
 
@@ -2077,6 +2079,29 @@
             const track = (ev, extra) => { try { window.dispatchEvent(new CustomEvent('ctc:reel', { detail: Object.assign({ event: ev }, extra || {}) })); if (window.zaraz && zaraz.track) zaraz.track('ctc_reel_' + ev, extra || {}); } catch (e) {} };
             let sdk = null;
             const loadSdk = () => sdk || (sdk = new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://embed.cloudflarestream.com/embed/sdk.latest.js'; sc.onload = () => res(window.Stream); sc.onerror = rej; document.head.appendChild(sc); }));
+            /* YouTube: wraps the IFrame API so it looks like the Stream player (play, currentTime, duration, events) */
+            let ytApi = null;
+            const ytReady = () => ytApi || (ytApi = new Promise((res, rej) => {
+                if (window.YT && window.YT.Player) return res(window.YT);
+                const prev = window.onYouTubeIframeAPIReady; window.onYouTubeIframeAPIReady = () => { if (prev) prev(); res(window.YT); };
+                const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; sc.onerror = rej; document.head.appendChild(sc);
+            }));
+            const loadYt = () => ytReady().then(Y => function (frame) {
+                const ls = {}, emit = ev => (ls[ev] || []).forEach(f => f());
+                let p = null, timer = null;
+                const api = {
+                    addEventListener: (ev, f) => (ls[ev] = ls[ev] || []).push(f),
+                    play: () => p && p.playVideo(), pause: () => p && p.pauseVideo(),
+                    get currentTime() { return p && p.getCurrentTime ? p.getCurrentTime() : 0; },
+                    set currentTime(t) { if (p) p.seekTo(t, true); },
+                    get duration() { return p && p.getDuration ? p.getDuration() : 0; }
+                };
+                p = new Y.Player(frame, { events: { onStateChange: e => {
+                    if (e.data === 1) { emit('play'); emit('playing'); if (!timer) timer = setInterval(() => { if (!frame.isConnected) { clearInterval(timer); return; } emit('timeupdate'); }, 500); }
+                    if (e.data === 0) emit('ended');
+                } } });
+                return api;
+            });
 
             /* ---- hero background loop (silent) ---- */
             (function heroLoop() {
@@ -2104,13 +2129,15 @@
 
             /* ---- reel: pending vs live ---- */
             const band = $('reel');
-            if (!CTC.reel) return;
+            const YT = CTC.youtube;
+            if (!CTC.reel && !YT) return;
+            const thumb = YT ? 'https://i.ytimg.com/vi/' + YT + '/maxresdefault.jpg' : STREAM + CTC.reel + '/thumbnails/thumbnail.jpg';
             band.classList.add('live');
             document.getElementById('navReel').hidden = false;
             $('heroWatch').hidden = false; $('mctaWatch').hidden = false;
             $('heroIncluded').hidden = true;
             if (CTC.length) $('reelMeta').textContent = CTC.length + ' · with sound · captions on';
-            $('reelPoster').style.backgroundImage = "url('" + STREAM + CTC.reel + "/thumbnails/thumbnail.jpg?time=" + (CTC.loopStart || 1) + "s&height=1080'), url('images/opt/ctc-room.jpg')";
+            $('reelPoster').style.backgroundImage = "url('" + (YT ? thumb : thumb + "?time=" + (CTC.loopStart || 1) + "s&height=1080") + "'), url('images/opt/ctc-room.jpg')";
 
             const chapters = CTC.chapters.filter(c => typeof c.start === 'number');
             const moments = $('moments'), list = $('rmChapters');
@@ -2128,7 +2155,7 @@
 
             /* search engines: VideoObject */
             try {
-                const ld = { '@context': 'https://schema.org', '@type': 'VideoObject', name: 'Composure Through Conflict show reel', description: 'Sam Osborne and David J. Graf, Esq., CCAL, deliver Composure Through Conflict, including a live volunteer demonstration of the Demartini Method.', thumbnailUrl: STREAM + CTC.reel + '/thumbnails/thumbnail.jpg', contentUrl: STREAM + CTC.reel + '/manifest/video.m3u8', embedUrl: STREAM + CTC.reel + '/iframe' };
+                const ld = { '@context': 'https://schema.org', '@type': 'VideoObject', name: 'Composure Through Conflict show reel', description: 'Sam Osborne and David J. Graf, Esq., CCAL, deliver Composure Through Conflict, including a live volunteer demonstration of the Demartini Method.', thumbnailUrl: thumb, contentUrl: YT ? 'https://www.youtube.com/watch?v=' + YT : STREAM + CTC.reel + '/manifest/video.m3u8', embedUrl: YT ? 'https://www.youtube.com/embed/' + YT : STREAM + CTC.reel + '/iframe' };
                 if (CTC.uploadDate) ld.uploadDate = CTC.uploadDate;
                 const sc = document.createElement('script'); sc.type = 'application/ld+json'; sc.textContent = JSON.stringify(ld); document.head.appendChild(sc);
             } catch (e) {}
@@ -2144,11 +2171,13 @@
                 iframe = document.createElement('iframe');
                 iframe.title = 'Composure Through Conflict show reel';
                 iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; iframe.allowFullscreen = true;
-                iframe.src = STREAM + CTC.reel + '/iframe?autoplay=true&controls=true&defaultTextTrack=en&preload=auto' + (at ? '&startTime=' + at + 's' : '');
+                iframe.src = YT
+                    ? 'https://www.youtube-nocookie.com/embed/' + YT + '?autoplay=1&rel=0&modestbranding=1&playsinline=1&cc_load_policy=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin) + (at ? '&start=' + Math.floor(at) : '')
+                    : STREAM + CTC.reel + '/iframe?autoplay=true&controls=true&defaultTextTrack=en&preload=auto' + (at ? '&startTime=' + at + 's' : '');
                 stage.insertBefore(iframe, end);
                 $('rmClose').focus();
                 track('open', { from: src || 'reel' });
-                loadSdk().then(Stream => {
+                (YT ? loadYt() : loadSdk()).then(Stream => {
                     player = Stream(iframe);
                     player.addEventListener('play', () => track('play'));
                     player.addEventListener('timeupdate', () => {
