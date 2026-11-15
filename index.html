@@ -2054,6 +2054,7 @@
            - uploadDate: the date the reel went live (YYYY-MM-DD), for search engines.
            Leave reel empty and the page shows the "Show reel coming soon" state with the photos. */
         const CTC = {
+            youtube: 'FdoJZHSGE0g',   // YouTube video ID of the show reel. When set, it is used instead of a Stream "reel".
             reel: '',
             length: '',
             loop: '',
@@ -2104,13 +2105,17 @@
 
             /* ---- reel: pending vs live ---- */
             const band = $('reel');
-            if (!CTC.reel) return;
+            const YT = CTC.youtube;
+            if (!CTC.reel && !YT) return;
             band.classList.add('live');
             document.getElementById('navReel').hidden = false;
             $('heroWatch').hidden = false; $('mctaWatch').hidden = false;
             $('heroIncluded').hidden = true;
-            if (CTC.length) $('reelMeta').textContent = CTC.length + ' · with sound · captions on';
-            $('reelPoster').style.backgroundImage = "url('" + STREAM + CTC.reel + "/thumbnails/thumbnail.jpg?time=" + (CTC.loopStart || 1) + "s&height=1080'), url('images/opt/ctc-room.jpg')";
+            if (YT) $('reelMeta').textContent = (CTC.length ? CTC.length + ' · ' : '') + 'with sound';
+            else if (CTC.length) $('reelMeta').textContent = CTC.length + ' · with sound · captions on';
+            $('reelPoster').style.backgroundImage = YT
+                ? "url('https://i.ytimg.com/vi/" + YT + "/maxresdefault.jpg'), url('https://i.ytimg.com/vi/" + YT + "/hqdefault.jpg'), url('images/opt/ctc-room.jpg')"
+                : "url('" + STREAM + CTC.reel + "/thumbnails/thumbnail.jpg?time=" + (CTC.loopStart || 1) + "s&height=1080'), url('images/opt/ctc-room.jpg')";
 
             const chapters = CTC.chapters.filter(c => typeof c.start === 'number');
             const moments = $('moments'), list = $('rmChapters');
@@ -2128,7 +2133,9 @@
 
             /* search engines: VideoObject */
             try {
-                const ld = { '@context': 'https://schema.org', '@type': 'VideoObject', name: 'Composure Through Conflict show reel', description: 'Sam Osborne and David J. Graf, Esq., CCAL, deliver Composure Through Conflict, including a live volunteer demonstration of the Demartini Method.', thumbnailUrl: STREAM + CTC.reel + '/thumbnails/thumbnail.jpg', contentUrl: STREAM + CTC.reel + '/manifest/video.m3u8', embedUrl: STREAM + CTC.reel + '/iframe' };
+                const ld = { '@context': 'https://schema.org', '@type': 'VideoObject', name: 'Composure Through Conflict show reel', description: 'Sam Osborne and David J. Graf, Esq., CCAL, deliver Composure Through Conflict, including a live volunteer demonstration of the Demartini Method.' };
+                if (YT) Object.assign(ld, { thumbnailUrl: 'https://i.ytimg.com/vi/' + YT + '/maxresdefault.jpg', contentUrl: 'https://www.youtube.com/watch?v=' + YT, embedUrl: 'https://www.youtube.com/embed/' + YT });
+                else Object.assign(ld, { thumbnailUrl: STREAM + CTC.reel + '/thumbnails/thumbnail.jpg', contentUrl: STREAM + CTC.reel + '/manifest/video.m3u8', embedUrl: STREAM + CTC.reel + '/iframe' });
                 if (CTC.uploadDate) ld.uploadDate = CTC.uploadDate;
                 const sc = document.createElement('script'); sc.type = 'application/ld+json'; sc.textContent = JSON.stringify(ld); document.head.appendChild(sc);
             } catch (e) {}
@@ -2136,7 +2143,11 @@
             /* ---- lightbox player ---- */
             const modal = $('reelModal'), stage = $('rmStage'), end = $('rmEnd');
             let player = null, iframe = null, lastFocus = null, marks = {};
-            function seek(t) { if (player) { player.currentTime = t; player.play(); end.classList.remove('on'); } }
+            const ytSrc = at => 'https://www.youtube.com/embed/' + YT + '?autoplay=1&rel=0&playsinline=1&cc_load_policy=1' + (at ? '&start=' + Math.floor(at) : '');
+            function seek(t) {
+                if (YT) { if (iframe) iframe.src = ytSrc(t); end.classList.remove('on'); return; }
+                if (player) { player.currentTime = t; player.play(); end.classList.remove('on'); }
+            }
             function setCurrent(t) { const btns = list.querySelectorAll('button'); let cur = -1; chapters.forEach((c, i) => { if (t >= c.start) cur = i; }); btns.forEach((b, i) => b.setAttribute('aria-current', i === cur ? 'true' : 'false')); }
             function open(at, src) {
                 lastFocus = document.activeElement; marks = {};
@@ -2144,10 +2155,17 @@
                 iframe = document.createElement('iframe');
                 iframe.title = 'Composure Through Conflict show reel';
                 iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; iframe.allowFullscreen = true;
-                iframe.src = STREAM + CTC.reel + '/iframe?autoplay=true&controls=true&defaultTextTrack=en&preload=auto' + (at ? '&startTime=' + at + 's' : '');
+                if (YT) {
+                    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen';
+                    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+                    iframe.src = ytSrc(at);
+                } else {
+                    iframe.src = STREAM + CTC.reel + '/iframe?autoplay=true&controls=true&defaultTextTrack=en&preload=auto' + (at ? '&startTime=' + at + 's' : '');
+                }
                 stage.insertBefore(iframe, end);
                 $('rmClose').focus();
                 track('open', { from: src || 'reel' });
+                if (YT) return;
                 loadSdk().then(Stream => {
                     player = Stream(iframe);
                     player.addEventListener('play', () => track('play'));
