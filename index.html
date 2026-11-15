@@ -1431,6 +1431,11 @@
         @media (max-width: 900px) {
             .cine-hero .hero-grid.with-video { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-top: 50px; }
         }
+        /* extended program video under the hero */
+        .watch-section { padding-top: 80px; padding-bottom: 80px; max-width: 1200px; }
+        .watch-lead { font-size: 17px; line-height: 1.6; color: rgba(245,245,247,.75); max-width: 640px; margin: -12px 0 36px; }
+        .watch-video { max-width: 1000px; }
+        @media (max-width: 768px) { .watch-section { padding: 56px 20px; } }
     </style>
     <script>
         // Turn on motion before first paint (skipped for visitors who ask for reduced motion)
@@ -1454,7 +1459,7 @@
             </button>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#what">The Session</a></li>
-                <li id="navReel"><a href="#video">Reel</a></li>
+                <li id="navReel"><a href="#watch">Video</a></li>
                 <li><a href="#speakers">Speakers</a></li>
                 <li><a href="#results">Results</a></li>
                 <li><a href="#program">Program</a></li>
@@ -1485,8 +1490,12 @@
                     <a href="#what" class="btn btn-secondary" id="heroIncluded">See What's Included</a>
                 </div>
             </div>
-            <div class="reel-ph reel-video hero-video rise" id="video" style="animation-delay:1s">
-                <iframe src="https://www.youtube.com/embed/FdoJZHSGE0g?rel=0&amp;playsinline=1" title="Composure Through Conflict show reel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <!-- 3-minute sizzle reel: paste the YouTube video ID into data-youtube="" and the placeholder becomes the video -->
+            <div class="reel-ph hero-video rise" id="video" data-youtube="" data-title="Composure Through Conflict sizzle reel" style="animation-delay:1s" role="img" aria-label="Sizzle reel coming soon">
+                <span class="ph-play" aria-hidden="true"></span>
+                <span class="ph-title">Sizzle reel coming soon</span>
+                <span class="ph-sub">3 minutes &middot; Filmed live</span>
+                <span class="ph-corner" aria-hidden="true"><i></i>Reel</span>
             </div>
         </div>
         <div class="hero-proof-wrap rise" style="animation-delay:1.6s">
@@ -1508,6 +1517,16 @@
         <span class="scroll-cue" aria-hidden="true"></span>
     </section>
 
+
+    <!-- PROGRAM VIDEO: the longer (about 6-minute) look at the program -->
+    <section class="section watch-section" id="watch">
+        <div class="section-label">Inside the Program</div>
+        <h2 class="section-title">See More of the Session</h2>
+        <p class="watch-lead">A longer look at Composure Through Conflict, including the live volunteer demonstration. About 6 minutes.</p>
+        <div class="reel-ph reel-video watch-video">
+            <iframe src="https://www.youtube.com/embed/FdoJZHSGE0g?rel=0&amp;playsinline=1" title="Composure Through Conflict extended program video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+    </section>
 
     <!-- SPOKEN AT -->
     <section class="spoken-at" aria-label="Spoken at">
@@ -2215,6 +2234,20 @@
 
         // Request form: grey out selects until a choice is made
         document.querySelectorAll('#contact .form-select').forEach(sel => { const upd = () => sel.classList.toggle('is-empty', !sel.value); upd(); sel.addEventListener('change', upd); });
+
+        // Hero sizzle reel: becomes the YouTube video once data-youtube has an ID
+        (function () {
+            const box = document.getElementById('video');
+            const id = box && (box.dataset.youtube || '').trim();
+            if (!id) return;
+            const f = document.createElement('iframe');
+            f.src = 'https://www.youtube.com/embed/' + encodeURIComponent(id) + '?rel=0&playsinline=1';
+            f.title = box.dataset.title || 'Sizzle reel';
+            f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+            f.referrerPolicy = 'strict-origin-when-cross-origin'; f.allowFullscreen = true;
+            box.textContent = ''; box.removeAttribute('role'); box.removeAttribute('aria-label');
+            box.classList.add('reel-video'); box.appendChild(f);
+        })();
 
         // FAQ toggle
         function toggleFaq(btn) {
