@@ -1495,6 +1495,26 @@
         .vlb-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
         .vlb-close { position: absolute; top: -52px; right: 0; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(212,165,116,.5); background: transparent; color: var(--gold); font-size: 24px; line-height: 1; cursor: pointer; }
         .vlb-close:hover { background: rgba(212,165,116,.12); }
+        /* hero stills from the program video: Dave, then Sam (slow crossfade) */
+        .cine-hero .hero-kb.k1 { object-position: 30% 28%; }
+        .cine-hero .hero-kb.k2 { object-position: 40% 20%; opacity: 0; }
+        .cine .cine-hero .hero-kb.k1 { animation: kbslow 20s ease-in-out infinite alternate; }
+        .cine .cine-hero .hero-kb.k2 { animation: kbslow 20s ease-in-out infinite alternate, xfade 20s ease-in-out infinite; }
+        @keyframes kbslow { from { transform: scale(1.02); } to { transform: scale(1.1); } }
+        @keyframes xfade { 0%, 40% { opacity: 0; } 50%, 90% { opacity: 1; } 100% { opacity: 0; } }
+        .hero-play { top: auto; bottom: clamp(48px, 9vh, 110px); transform: none; right: clamp(32px, 6vw, 120px); }
+        .hp-ring { width: 84px; height: 84px; }
+        .hp-tri { border-width: 12px 0 12px 19px; }
+        @media (max-width: 1100px) { .hero-play { flex-direction: row; text-align: left; } }
+        @media (max-width: 900px) {
+            .cine-hero .hero-kb.k1 { object-position: 58% 25%; }
+            .cine-hero .hero-kb.k2 { object-position: 52% 20%; }
+            .hero-play { top: 46vh; bottom: auto; right: 20px; transform: translateY(-50%); }
+            .hp-ring { width: 64px; height: 64px; }
+            .hp-tri { border-width: 10px 0 10px 16px; }
+            .hp-label { font-size: 18px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .cine-hero .hero-kb.k2 { display: none; } }
     </style>
     <script>
         // Turn on motion before first paint (skipped for visitors who ask for reduced motion)
@@ -1531,7 +1551,10 @@
     <!-- HERO -->
     <section class="hero cine-hero" id="top">
         <span class="grain" aria-hidden="true"></span><span class="lb lb-top" aria-hidden="true"></span><span class="lb lb-bot" aria-hidden="true"></span>
-        <div class="hero-media" aria-hidden="true"><img class="hero-kb" src="images/opt/ctc-room.jpg" alt="" width="2000" height="1332" fetchpriority="high"></div>
+        <div class="hero-media" aria-hidden="true">
+            <img class="hero-kb k1" src="images/opt/ctc-hero-dave.jpg" alt="" width="1918" height="860" fetchpriority="high">
+            <img class="hero-kb k2" src="images/opt/ctc-hero-sam.jpg" alt="" width="1918" height="700" loading="eager">
+        </div>
         <div class="hero-grid">
             <div class="hero-content">
                 <h1 class="hero-title rise" style="animation-delay:.5s">Composure <em>Through</em> Conflict</h1>
