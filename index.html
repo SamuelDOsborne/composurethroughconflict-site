@@ -1452,6 +1452,11 @@
         .quote-feature blockquote { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(36px, 5.6vw, 76px); line-height: 1.08; letter-spacing: -.01em; color: #F5F5F7; text-wrap: balance; overflow-wrap: break-word; }
         .quote-feature figcaption { margin-top: 28px; font-size: clamp(12px, 1.1vw, 14px); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
         .quote-feature figcaption::before { content: ""; display: block; width: 48px; height: 2px; background: var(--gold); margin: 0 auto 20px; }
+        /* hero video: clickable branded poster */
+        .reel-ph.is-playable { cursor: pointer; transition: border-color .3s ease, box-shadow .3s ease; }
+        .reel-ph.is-playable .ph-play { transition: transform .3s ease, background .3s ease; }
+        .reel-ph.is-playable:hover, .reel-ph.is-playable:focus-visible { border-color: var(--gold); box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(212,165,116,.4); outline: none; }
+        .reel-ph.is-playable:hover .ph-play, .reel-ph.is-playable:focus-visible .ph-play { transform: scale(1.08); background: rgba(212,165,116,.2); }
     </style>
     <script>
         // Turn on motion before first paint (skipped for visitors who ask for reduced motion)
@@ -1511,7 +1516,7 @@
                 <div class="reel-ph hero-video" id="video" data-youtube="FdoJZHSGE0g" data-title="Composure Through Conflict program video" role="img" aria-label="Composure Through Conflict program video">
                     <span class="ph-play" aria-hidden="true"></span>
                     <span class="ph-title">Composure Through Conflict</span>
-                    <span class="ph-sub">Program video</span>
+                    <span class="ph-sub">Inside the session &middot; Live demonstration</span>
                     <span class="ph-corner" aria-hidden="true"><i></i>Video</span>
                 </div>
             </div>
@@ -2239,18 +2244,25 @@
         // Request form: grey out selects until a choice is made
         document.querySelectorAll('#contact .form-select').forEach(sel => { const upd = () => sel.classList.toggle('is-empty', !sel.value); upd(); sel.addEventListener('change', upd); });
 
-        // Hero sizzle reel: becomes the YouTube video once data-youtube has an ID
+        // Hero video: the branded poster stays until clicked, then the YouTube player loads and plays
         (function () {
             const box = document.getElementById('video');
             const id = box && (box.dataset.youtube || '').trim();
             if (!id) return;
-            const f = document.createElement('iframe');
-            f.src = 'https://www.youtube.com/embed/' + encodeURIComponent(id) + '?rel=0&playsinline=1';
-            f.title = box.dataset.title || 'Sizzle reel';
-            f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-            f.referrerPolicy = 'strict-origin-when-cross-origin'; f.allowFullscreen = true;
-            box.textContent = ''; box.removeAttribute('role'); box.removeAttribute('aria-label');
-            box.classList.add('reel-video'); box.appendChild(f);
+            box.classList.add('is-playable');
+            box.setAttribute('role', 'button'); box.setAttribute('tabindex', '0');
+            box.setAttribute('aria-label', 'Play video: ' + (box.dataset.title || 'program video'));
+            const play = () => {
+                const f = document.createElement('iframe');
+                f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?rel=0&playsinline=1&autoplay=1&modestbranding=1';
+                f.title = box.dataset.title || 'Program video';
+                f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                f.referrerPolicy = 'strict-origin-when-cross-origin'; f.allowFullscreen = true;
+                box.textContent = ''; box.removeAttribute('role'); box.removeAttribute('tabindex'); box.removeAttribute('aria-label');
+                box.classList.remove('is-playable'); box.classList.add('reel-video'); box.appendChild(f);
+            };
+            box.addEventListener('click', play, { once: true });
+            box.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (box.classList.contains('is-playable')) play(); } });
         })();
 
         // FAQ toggle
