@@ -1523,8 +1523,8 @@
             .hp-label { font-size: 18px; }
         }
         @media (prefers-reduced-motion: reduce) { .cine-hero .hero-kb.k2 { display: none; } }
-        /* hero background video (self-hosted loop: Dave, then Sam; cropped above the burned-in captions) */
-        .hero-vid { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; object-position: 15% 50%; opacity: 0; transition: opacity 1.1s ease; pointer-events: none; filter: var(--grade) brightness(.92) contrast(1.08); }
+        /* hero background video (self-hosted loop: Sam and Dave together, then quick cuts between them; cropped above the burned-in captions) */
+        .hero-vid { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; object-position: 75% 50%; opacity: 0; transition: opacity 1.1s ease; pointer-events: none; filter: var(--grade) brightness(.92) contrast(1.08); }
         .hero-vid.on { opacity: 1; }
         @media (max-width: 900px) { .hero-vid { object-position: 50% 30%; } }
         .cine-hero.vid-live .hero-kb.k2 { animation: none; opacity: 0; }
@@ -1580,7 +1580,7 @@
         <div class="hero-media" aria-hidden="true">
             <img class="hero-kb k1" src="images/ctc-hero-dave.jpg" alt="" width="1918" height="860" fetchpriority="high">
             <img class="hero-kb k2" src="images/ctc-hero-sam.jpg" alt="" width="1918" height="700" loading="eager">
-            <!-- Background video: Dave clip, then Sam clip, from the program video (1:09-1:17 and 2:43-2:50), hosted on this site.
+            <!-- Background video, hosted on this site: Sam and Dave together (4:16), then back and forth: Sam 0:52, Dave 1:09, Sam 2:43, Dave 3:43, Sam 1:24 (times in the program video).
                  video/hero-loop.mp4 is for computers, video/hero-loop-mobile.mp4 is a smaller upright cut for phones. Stills above show until the video is playing. -->
             <video class="hero-vid" id="heroVid" muted loop playsinline preload="none" tabindex="-1" data-desktop="video/hero-loop.mp4" data-mobile="video/hero-loop-mobile.mp4" data-poster-desktop="images/hero-loop-poster.jpg" data-poster-mobile="images/hero-loop-mobile-poster.jpg"></video>
         </div>
@@ -2410,7 +2410,7 @@
             document.addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) close(); });
         });
 
-        // Hero background video: self-hosted loop (Dave, then Sam). Phones get a smaller upright cut.
+        // Hero background video: self-hosted loop (Sam and Dave together, then back and forth). Phones get a smaller upright cut.
         document.addEventListener('DOMContentLoaded', function () {
             const hero = document.getElementById('top');
             const v = document.getElementById('heroVid');
