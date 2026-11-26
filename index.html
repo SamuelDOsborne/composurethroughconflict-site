@@ -1802,6 +1802,19 @@
         .footer-links a:hover { color: #fff; }
         .footer-copy { color: rgba(255,255,255,.45); }
         #fees .fees-grid, .what-grid, .carousel-track { align-items: stretch !important; }
+        /* ===== SPOKEN AT: black band so the white CAI, CCAL and SCFIA logos show in white ===== */
+        .spoken-at { max-width: none; margin: 0; background: var(--t-ps-bg); border-bottom: 0; padding: 72px max(40px, calc((100% - 1320px) / 2)) 88px; }
+        .spoken-at-label { color: var(--t-ps-em); }
+        .spoken-at-logo { color: rgba(255,255,255,.72); }
+        .spoken-at-logo img { filter: none; opacity: .92; }
+        .spoken-at-logo:hover img { opacity: 1; }
+        .spoken-at-logos { align-items: flex-end; }
+        .spoken-at-logo { align-items: flex-start; }
+        .spoken-at-cai img { height: 80px; }
+        @media (max-width: 600px) {
+            .spoken-at { padding: 56px 24px 64px; }
+            .spoken-at-cai img { height: 64px; }
+        }
     </style>
     <script>
         // Turn on motion before first paint (skipped for visitors who ask for reduced motion)
@@ -1899,9 +1912,13 @@
     <section class="spoken-at" aria-label="Spoken at">
         <div class="spoken-at-label">Spoken At</div>
         <div class="spoken-at-logos">
-            <a class="spoken-at-logo" href="https://www.caionline.org/" target="_blank" rel="noopener">
-                <img src="images/ccal-cai-white.png" alt="College of Community Association Lawyers and Community Associations Institute logo" width="198" height="191" loading="lazy">
+            <a class="spoken-at-logo spoken-at-cai" href="https://www.caionline.org/" target="_blank" rel="noopener">
+                <img src="images/cai-logo-white.png" alt="Community Associations Institute (CAI) logo" width="197" height="80" loading="lazy">
                 <span>Community Associations Institute National Law Seminar 2026</span>
+            </a>
+            <a class="spoken-at-logo" href="https://www.caionline.org/" target="_blank" rel="noopener">
+                <img src="images/ccal-cai-white.png" alt="College of Community Association Lawyers logo" width="198" height="191" loading="lazy">
+                <span>College of Community Association Lawyers</span>
             </a>
             <a class="spoken-at-logo" href="https://scfia.org/" target="_blank" rel="noopener">
                 <img src="images/scfia-white.png" alt="Southern California Fraud Investigators' Association (SCFIA) seal" width="445" height="480" loading="lazy">
