@@ -1515,10 +1515,10 @@
             .hp-label { font-size: 18px; }
         }
         @media (prefers-reduced-motion: reduce) { .cine-hero .hero-kb.k2 { display: none; } }
-        /* hero background video (YouTube, muted, cropped above the burned-in captions) */
-        .hero-vid { position: absolute; inset: 0; z-index: 1; overflow: hidden; opacity: 0; transition: opacity 1.1s ease; pointer-events: none; }
+        /* hero background video (self-hosted loop: Dave, then Sam; cropped above the burned-in captions) */
+        .hero-vid { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; object-position: 15% 50%; opacity: 0; transition: opacity 1.1s ease; pointer-events: none; filter: var(--grade) brightness(.92) contrast(1.08); }
         .hero-vid.on { opacity: 1; }
-        .hero-vid iframe, .hero-vid > div { position: absolute; border: 0; pointer-events: none; filter: var(--grade) brightness(.92) contrast(1.08); }
+        @media (max-width: 900px) { .hero-vid { object-position: 50% 30%; } }
         .cine-hero.vid-live .hero-kb.k2 { animation: none; opacity: 0; }
 
         /* ================= POWER STATEMENTS ================= */
@@ -1572,9 +1572,9 @@
         <div class="hero-media" aria-hidden="true">
             <img class="hero-kb k1" src="images/ctc-hero-dave.jpg" alt="" width="1918" height="860" fetchpriority="high">
             <img class="hero-kb k2" src="images/ctc-hero-sam.jpg" alt="" width="1918" height="700" loading="eager">
-            <!-- Background video: Dave clip, then Sam clip, from the program video (seconds). Stills above show until the video is playing. -->
-            <div class="hero-vid" data-yt="FdoJZHSGE0g" data-start="69" data-end="77"></div>
-            <div class="hero-vid" data-yt="FdoJZHSGE0g" data-start="163" data-end="170"></div>
+            <!-- Background video: Dave clip, then Sam clip, from the program video (1:09-1:17 and 2:43-2:50), hosted on this site.
+                 video/hero-loop.mp4 is for computers, video/hero-loop-mobile.mp4 is a smaller upright cut for phones. Stills above show until the video is playing. -->
+            <video class="hero-vid" id="heroVid" muted loop playsinline preload="none" tabindex="-1" data-desktop="video/hero-loop.mp4" data-mobile="video/hero-loop-mobile.mp4" data-poster-desktop="images/hero-loop-poster.jpg" data-poster-mobile="images/hero-loop-mobile-poster.jpg"></video>
         </div>
         <div class="hero-grid">
             <div class="hero-content">
@@ -2400,73 +2400,21 @@
             document.addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) close(); });
         });
 
-        // Hero background video: plays the Dave clip, crossfades to the Sam clip, and repeats (desktop only)
+        // Hero background video: self-hosted loop (Dave, then Sam). Phones get a smaller upright cut.
         document.addEventListener('DOMContentLoaded', function () {
             const hero = document.getElementById('top');
-            const boxes = Array.from(document.querySelectorAll('.hero-vid'));
-            if (!hero || boxes.length < 1) return;
-            const ok = window.matchMedia('(min-width: 901px)').matches
-                && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-                && !(navigator.connection && navigator.connection.saveData);
-            if (!ok) return;
-            const clips = boxes.map(b => ({ box: b, id: b.dataset.yt, start: +b.dataset.start, end: +b.dataset.end, player: null, ready: false }));
-            // size each player so the bottom of the frame (captions) and the top (YouTube title bar) fall outside the hero
-            const fit = () => {
-                const W = hero.clientWidth, H = hero.clientHeight;
-                let h = H / 0.76, w = h * 16 / 9;
-                if (w < W * 1.02) { w = W * 1.02; h = w * 9 / 16; }
-                const left = Math.min(0, Math.max(W - w, W * 0.68 - w * 0.55));
-                clips.forEach(c => { const f = c.box.firstElementChild; if (!f) return; Object.assign(f.style, { width: w + 'px', height: h + 'px', left: left + 'px', top: (-h * 0.07) + 'px' }); });
-            };
-            window.addEventListener('resize', fit);
-            // both clips keep playing muted; only one is visible. The hidden one is rewound just before each crossfade.
-            let active = 0;
-            const show = i => { clips.forEach((c, j) => c.box.classList.toggle('on', j === i)); hero.classList.add('vid-live'); };
-            const tick = () => {
-                clips.forEach((c, i) => {
-                    if (!c.ready || i === active) return;
-                    const t = c.player.getCurrentTime();
-                    if (t > c.end || t < c.start - 1) c.player.seekTo(c.start, true);
-                    if (c.player.getPlayerState() !== 1) c.player.playVideo();
-                });
-                const cur = clips[active];
-                if (!cur.ready) return;
-                const t = cur.player.getCurrentTime();
-                if (t < cur.start - 1) { cur.player.seekTo(cur.start, true); return; }
-                const nextIdx = (active + 1) % clips.length, next = clips[nextIdx];
-                if (t >= cur.end - 1.6 && !cur.primed && nextIdx !== active && next.ready) { next.player.seekTo(next.start, true); cur.primed = true; }
-                if (t >= cur.end - 0.6) {
-                    cur.primed = false;
-                    if (nextIdx !== active && next.ready && next.player.getPlayerState() === 1) { show(nextIdx); active = nextIdx; }
-                    else cur.player.seekTo(cur.start, true);
-                }
-            };
-            const build = () => {
-                clips.forEach((c, i) => {
-                    const host = document.createElement('div'); c.box.appendChild(host);
-                    c.player = new YT.Player(host, {
-                        host: 'https://www.youtube-nocookie.com',
-                        videoId: c.id,
-                        playerVars: { autoplay: 1, mute: 1, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, modestbranding: 1, playsinline: 1, rel: 0, start: c.start },
-                        events: {
-                            onReady: e => { e.target.mute(); e.target.playVideo(); fit(); },
-                            onStateChange: e => {
-                                if (e.data === 0) { e.target.seekTo(c.start, true); e.target.playVideo(); return; }
-                                if (e.data !== 1 || c.ready) return;
-                                c.ready = true;
-                                if (i === active) show(i);
-                            }
-                        }
-                    });
-                    const f = c.box.querySelector('iframe'); if (f) { f.setAttribute('tabindex', '-1'); f.setAttribute('aria-hidden', 'true'); f.title = 'Background video'; }
-                });
-                fit();
-                setInterval(tick, 200);
-            };
-            const prior = window.onYouTubeIframeAPIReady;
-            window.onYouTubeIframeAPIReady = function () { if (prior) prior(); build(); };
-            const go = () => { const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(sc); };
-            if (document.readyState === 'complete') setTimeout(go, 300); else window.addEventListener('load', () => setTimeout(go, 300));
+            const v = document.getElementById('heroVid');
+            if (!hero || !v) return;
+            if ((window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+                || (navigator.connection && navigator.connection.saveData)) { v.remove(); return; }
+            const mobile = window.matchMedia('(max-width: 900px)').matches;
+            v.muted = true;
+            v.poster = mobile ? v.dataset.posterMobile : v.dataset.posterDesktop;
+            v.src = mobile ? v.dataset.mobile : v.dataset.desktop;
+            v.addEventListener('playing', () => { v.classList.add('on'); hero.classList.add('vid-live'); }, { once: true });
+            const p = v.play(); if (p && p.catch) p.catch(() => {});
+            // pause while scrolled out of view to save battery
+            if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const q = v.play(); if (q && q.catch) q.catch(() => {}); } else v.pause(); })).observe(hero);
         });
 
         // FAQ toggle
