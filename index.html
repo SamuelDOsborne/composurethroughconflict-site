@@ -2335,7 +2335,7 @@
                 const i = sibs.indexOf(el);
                 if (i > 0) el.style.transitionDelay = Math.min(i * 0.09, 0.45) + 's';
             });
-            const targets = els.concat(Array.from(document.querySelectorAll('.band, .band-copy')));
+            const targets = els.concat(Array.from(document.querySelectorAll('.band, .band-copy, .split-photo')));
             if (!('IntersectionObserver' in window)) { targets.forEach(el => el.classList.add('inview')); return; }
             const io = new IntersectionObserver(entries => {
                 entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('inview'); io.unobserve(e.target); } });
