@@ -1156,6 +1156,14 @@
         .band-right::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(270deg, rgba(5,5,6,.85) 0%, rgba(5,5,6,.5) 40%, rgba(5,5,6,0) 62%); }
         @media (max-width: 768px) { .band-right .band-copy { align-items: flex-start; text-align: left; } .band-right::before, #reel::before { background: linear-gradient(180deg, rgba(5,5,6,0) 30%, rgba(5,5,6,.7) 100%); } }
         @media (max-width: 768px) { .band { min-height: 66vh; } .band-copy { padding: 0 20px 48px; } }
+        /* Split quote band: photo beside the quote (stacked on mobile) */
+        .band-split { min-height: 0; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: 56px; max-width: none; padding: 96px max(40px, calc((100vw - 1200px) / 2)); }
+        .band-split::after { display: none; }
+        .band-split .split-photo { position: relative; z-index: 2; margin: 0; border-radius: 6px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,.55); aspect-ratio: 4 / 3; }
+        .band-split .split-photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; filter: var(--grade); }
+        .band-split .band-copy { max-width: none; margin: 0; padding: 0; }
+        .band-split .band-quote { max-width: 560px; }
+        @media (max-width: 900px) { .band-split { grid-template-columns: 1fr; gap: 32px; padding: 64px 20px 56px; } .band-split .split-photo { border-radius: 4px; } }
 
         /* speakers: tall portraits */
         .speakers-grid .speaker-portrait { position: relative; width: 100%; max-width: 420px; aspect-ratio: 4 / 5; margin: 0 auto 26px; border-radius: 18px; overflow: hidden; background: #0d0d0d; border: 1px solid rgba(212,165,116,.28); }
@@ -1750,9 +1758,11 @@
     </section>
     
     <!-- QUOTE BAND -->
-    <section class="band band-right" aria-label="Attendee quote">
-        <div class="band-img" style="background-image:url('images/opt/sam-osborne-speaking-panel.jpg'); background-position: 30% 50%" aria-hidden="true"></div>
+    <section class="band band-split" aria-label="Attendee quote">
         <span class="grain" aria-hidden="true"></span>
+        <figure class="split-photo reveal">
+            <img src="images/opt/dave-augustus-sam.jpg" srcset="images/opt/dave-augustus-sam-800.jpg 800w, images/opt/dave-augustus-sam.jpg 1400w" sizes="(max-width: 768px) 100vw, 55vw" alt="David J. Graf, Augustus Shaw IV and Sam Osborne at the CAI Law Seminar" width="1400" height="1050" loading="lazy" decoding="async">
+        </figure>
         <div class="band-copy reveal">
             <div class="band-kicker">What leaders in the field say</div>
             <p class="band-quote">&ldquo;This transformational experience has forever changed the way I practice law and relate to people.&rdquo;</p>
