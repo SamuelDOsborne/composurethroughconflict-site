@@ -1520,6 +1520,19 @@
         .hero-vid.on { opacity: 1; }
         @media (max-width: 900px) { .hero-vid { object-position: 50% 30%; } }
         .cine-hero.vid-live .hero-kb.k2 { animation: none; opacity: 0; }
+
+        /* ================= POWER STATEMENTS ================= */
+        .ps { position: relative; background: var(--ink); padding: clamp(88px, 14vw, 168px) 40px; overflow: hidden; }
+        .ps::before { content: ""; position: absolute; left: 50%; top: 0; width: 1px; height: clamp(40px, 6vw, 72px); background: linear-gradient(var(--gold), transparent); opacity: .5; }
+        .ps-text { max-width: 1200px; margin: 0 auto; font-family: var(--serif); font-weight: 500; font-size: clamp(44px, 7.4vw, 104px); line-height: .98; letter-spacing: -.01em; color: #fff; text-wrap: balance; }
+        .ps-line { display: block; }
+        .ps-line em { font-style: italic; color: var(--gold-light); }
+        .cine .ps-line { opacity: 0; transform: translateX(-56px); transition: opacity 1s cubic-bezier(.2,.7,.2,1), transform 1s cubic-bezier(.2,.7,.2,1); }
+        .cine .ps-line:nth-child(2) { transition-delay: .18s; }
+        .cine .ps-line:nth-child(3) { transition-delay: .36s; }
+        .cine .ps.inview .ps-line { opacity: 1; transform: none; }
+        @media (max-width: 768px) { .ps { padding: 80px 20px; } .ps-text { font-size: clamp(38px, 11vw, 56px); } .cine .ps-line { transform: translateX(-28px); } }
+        @media (prefers-reduced-motion: reduce) { .ps-line { opacity: 1 !important; transform: none !important; transition: none !important; } }
     </style>
     <script>
         // Turn on motion before first paint (skipped for visitors who ask for reduced motion)
@@ -1647,6 +1660,14 @@
         </aside>
     </div>
 
+    <!-- POWER STATEMENT -->
+    <section class="ps" aria-label="Opposing counsel will push. Don&rsquo;t take the bait.">
+        <p class="ps-text">
+            <span class="ps-line">Opposing counsel will push.</span>
+            <span class="ps-line"><em>Don&rsquo;t take the bait.</em></span>
+        </p>
+    </section>
+
     <!-- WHAT -->
     <section class="section" id="what">
         <div class="section-label">The Session</div>
@@ -1697,13 +1718,21 @@
 
   
 
-<!-- SPEAKERS -->
+    <!-- POWER STATEMENT -->
+    <section class="ps" aria-label="Let the argument go. Get back to work.">
+        <p class="ps-text">
+            <span class="ps-line">Let the argument go.</span>
+            <span class="ps-line"><em>Get back to work.</em></span>
+        </p>
+    </section>
+
+    <!-- SPEAKERS -->
     <section class="section" id="speakers">
         <div class="section-label reveal inview">The Duo</div>
         <h2 class="section-title reveal inview" style="transition-delay: 0.09s;">Your Speakers</h2>
 
         <div class="speakers-duo-banner reveal inview" style="transition-delay: 0.14s; width: 100%; max-width: 960px; margin: 48px auto 64px; border-radius: 18px; overflow: hidden; border: 1px solid rgba(212, 165, 116, 0.28); background: #141416; display: flex; align-items: center; justify-content: center;">
-            <img src="images/sam-and-dave.png" alt="David J. Graf, Esq., CCAL, and Sam Osborne" loading="lazy" style="width: 100%; height: auto; display: block; filter: saturate(.75) contrast(1.04);">
+            <img src="images/newspaper-effect-sam-and-dave.jpg" alt="David J. Graf, Esq., CCAL, and Sam Osborne" width="1791" height="1194" loading="lazy" style="width: 100%; height: auto; display: block;">
         </div>
 
         <div class="speakers-grid" style="margin-top: 0;">
@@ -1790,6 +1819,14 @@
                 <div class="result-label">Presentation Skills</div>
             </div>
         </div>
+    </section>
+
+    <!-- POWER STATEMENT -->
+    <section class="ps" aria-label="Best session of the conference, on a Friday morning">
+        <p class="ps-text">
+            <span class="ps-line">Best session of the conference.</span>
+            <span class="ps-line"><em>On a Friday morning.</em></span>
+        </p>
     </section>
 
     <!-- PROGRAM -->
@@ -1938,6 +1975,14 @@
                 <div class="faq-answer">Reach out as early as possible and we'll work with you to find an alternate date. Rescheduling and cancellation terms are outlined in the speaking agreement provided at booking.</div>
             </div>
         </div>
+    </section>
+
+    <!-- POWER STATEMENT -->
+    <section class="ps" aria-label="Calm under fire? You can learn it.">
+        <p class="ps-text">
+            <span class="ps-line">Calm under fire?</span>
+            <span class="ps-line"><em>You can learn it.</em></span>
+        </p>
     </section>
 
     <!-- CONTACT -->
@@ -2286,6 +2331,17 @@
                 entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('inview'); io.unobserve(e.target); } });
             }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
             targets.forEach(el => io.observe(el));
+        })();
+
+        // Power statements: lines slide in on scroll
+        (function () {
+            const ps = document.querySelectorAll('.ps');
+            if (!ps.length) return;
+            if (!('IntersectionObserver' in window)) { ps.forEach(el => el.classList.add('inview')); return; }
+            const io = new IntersectionObserver(entries => {
+                entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('inview'); io.unobserve(e.target); } });
+            }, { threshold: 0.35 });
+            ps.forEach(el => io.observe(el));
         })();
 
         // Count-up numbers
