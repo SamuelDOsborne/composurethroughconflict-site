@@ -1538,6 +1538,10 @@
         .hero-title .hl { display: inline-block; }
         .cine .hero-title .hl { opacity: 0; transform: translateX(1.1em); filter: blur(6px); animation: letterIn .95s cubic-bezier(.16,1,.3,1) forwards; }
         @keyframes letterIn { 60% { filter: blur(0); } to { opacity: 1; transform: none; filter: blur(0); } }
+        /* once the cascade has landed, "Conflict" opens up with a little air between its letters */
+        .cine-hero .hero-title .hw-letters { letter-spacing: .03em; }
+        .cine .cine-hero .hero-title .hw-letters { animation: letterAir 1.1s cubic-bezier(.65,0,.35,1) 3.05s both; }
+        @keyframes letterAir { from { letter-spacing: -.055em; } to { letter-spacing: .03em; } }
         .cine .hfade { opacity: 0; animation: heroFade 1s ease forwards; }
         @keyframes heroFade { to { opacity: 1; } }
 
